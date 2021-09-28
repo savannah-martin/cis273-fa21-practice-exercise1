@@ -6,7 +6,8 @@ namespace PracticeExercise1
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            ArrayList al = new ArrayList();
+            al.Append(0);
         }
     }
 }
