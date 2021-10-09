@@ -1,25 +1,43 @@
-﻿using System;
+using System;
 namespace PracticeExercise1
 {
-    public class ArrayList : IList
+    public class ArrayList: IList
     {
         private int[] array = null;
-        //count is how many of the array spots are in use
         private int count = 0;
 
         public ArrayList()
         {
             array = new int[16];
-
         }
 
         public int Length => count;
 
         public bool IsEmpty => count == 0;
 
-        public int First => throw new NotImplementedException();
+        public int First
+        {
+            get
+            {
+                if (IsEmpty)
+                {
+                throw new NullReferenceException();
+                }
+                    return array[0];
+            }
+        }
 
-        public int Last => throw new NotImplementedException();
+        public int Last
+        {
+            get
+            {
+                if (IsEmpty)
+                {
+                    throw new NullReferenceException();
+                }
+                return array[count-1];
+            }
+        }
 
         public void Append(int i)
         {
@@ -29,12 +47,10 @@ namespace PracticeExercise1
             }
 
             array[count++] = i;
-            //count++;
         }
 
         private void Resize()
         {
-            //double length of array
             Array.Resize(ref array, array.Length * 2);
         }
 
@@ -47,24 +63,25 @@ namespace PracticeExercise1
 
             int indexOfExistingValue = FirstIndexOf(existingValue);
 
-            if (indexOfExistingValue == -1)
+            if( indexOfExistingValue == -1)
             {
                 Append(newValue);
             }
             else
             {
-                //shift everything from that index to the right
-                ShiftRight(indexOfExistingValue);
+                // shift everything from that index to the right
+                ShiftRight(indexOfExistingValue+1);
 
-                //add new value at that index
-                array[indexOfExistingValue] = newValue;
+                // add new value at that index
+                array[indexOfExistingValue+1] = newValue;
                 count++;
             }
+
         }
 
         public int FirstIndexOf(int existingValue)
         {
-            //find index of existing value
+            // find index of existing value
             for (int i = 0; i < count; i++)
             {
                 if (array[i] == existingValue)
@@ -82,28 +99,48 @@ namespace PracticeExercise1
             {
                 Resize();
             }
+
             ShiftRight(0);
             array[0] = i;
+            count++;
+
         }
 
         private void ShiftRight(int startingIndex)
         {
-            for (int i = count; i > startingIndex; i--)
+            if (count == array.Length)
+            {
+                Resize();
+            }
+
+            for (int i=count; i>startingIndex; i--)
             {
                 array[i] = array[i - 1];
             }
         }
 
-        //TODO
+        // TODO
         private void ShiftLeft(int startingIndex)
         {
-        
+            if (count == array.Length)
+            {
+                Resize();
+            }
+
+            for (int i = startingIndex; i < count+1; i++)
+            {
+                array[i] = array[i + 1];
+            }
         }
 
         public override string ToString()
         {
+            if (count == 0)
+            {
+                return "[]";
+            }
             string result = "[";
-           for (int i=0; i<count -1; i++)
+            for (int i = 0; i < count - 1; i++)
             {
                 result += array[i] + ", ";
             }
@@ -111,7 +148,62 @@ namespace PracticeExercise1
             result += array[count - 1] + "]";
             return result;
 
-            //return "[" + String.Join(", ", array) + "]";
+
+            //return "[" + string.Join(", ", array) + "]";
+
+        }
+
+        public void InsertAt(int newValue, int index)
+        {
+
+            if (count == array.Length)
+            {
+                Resize();
+            }
+
+            if (index == array.Length)
+            {
+                Append(newValue);
+            }
+            if (index <0 || index > array.Length)
+            {
+                throw new IndexOutOfRangeException();
+            }
+            else
+            {
+                // shift everything from that index to the right
+                ShiftRight(index);
+
+                // add new value at that index
+                array[index] = newValue;
+                count++;
+            }
+
+        }
+
+        public void Remove(int value)
+        {
+            int indexOfValueToRemove = FirstIndexOf(value);
+
+            if (indexOfValueToRemove == -1)
+            {
+                return;
+            }
+            else
+            {
+                ShiftLeft(indexOfValueToRemove);
+                count--;
+                return;
+            }
+        }
+
+        public void RemoveAt(int index)
+        {
+            if (index < 0 || index > count - 1)
+            {
+                throw new IndexOutOfRangeException();
+            }
+            Remove(array[index]);
         }
 
         public void Clear()
@@ -123,28 +215,12 @@ namespace PracticeExercise1
         {
             var reversedList = new ArrayList();
 
+            for (int i = 0; i < count; i++)
+            {
+                reversedList.Prepend(array[i]);
+            }
+
             return reversedList;
-        }
-
-        public void InsertAfter(int i)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void InsertAt(int newValue, int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Remove(int value)
-        {
-            //do not remove from empty list
-            throw new NotImplementedException();
-        }
-
-        public void RemoveAt(int index)
-        {
-            throw new NotImplementedException();
         }
     }
 }
